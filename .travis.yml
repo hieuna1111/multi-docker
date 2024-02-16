@@ -1,0 +1,23 @@
+sudo: required
+language: generic
+services:
+  - docker
+
+before_install:
+  - docker build -t hieuna/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true hieuna/react-test npm run test -- --coverage
+
+after_success:
+  - docker build -t hieuna/multi-client ./client
+  - docker build -t hieuna/multi-nginx ./nginx
+  - docker build -t hieuna/multi-server ./server
+  - docker build -t hieuna/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push hieuna/multi-client
+  - docker push hieuna/multi-nginx
+  - docker push hieuna/multi-server
+  - docker push hieuna/multi-worker

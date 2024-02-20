@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - run: docker build -t hieuna/react-test -f ./client/Dockerfile.dev ./client
-      - run: docker run -e CI=true hieuna/react-test npm run test -- --coverage
+      - run: docker run -e CI=true hieuna/react-test npm run test
 
       - run: docker build -t hieuna/multi-client ./client
       - run: docker build -t hieuna/multi-nginx ./nginx
@@ -34,7 +34,6 @@ jobs:
           application_name: multi-docker
           environment_name: Multi-docker-env
           existing_bucket_name: elasticbeanstalk-ap-southeast-1-645410219996
-          bucket_path: multi-docker
           region: ap-southeast-1
           version_label: ${{ github.sha }}
           deployment_package: deploy.zip
